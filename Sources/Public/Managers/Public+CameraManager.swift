@@ -8,7 +8,6 @@
 //
 //  Copyright ©2024 Mijick. Licensed under MIT License.
 
-
 import SwiftUI
 import AVFoundation
 
@@ -24,9 +23,10 @@ public extension CameraManager {
         isGridVisible: Bool? = nil,
         focusImage: UIImage? = nil,
         focusImageColor: UIColor? = nil,
-        focusImageSize: CGFloat? = nil
+        focusImageSize: CGFloat? = nil,
+        presentFrameAfterVideoCapture: Bool? = nil
     ) {
-        self.init(.init(outputType, cameraPosition, cameraFilters, resolution, frameRate, flashMode, isGridVisible))
+        self.init(.init(outputType, cameraPosition, cameraFilters, resolution, frameRate, flashMode, isGridVisible, presentFrameAfterVideoCapture: presentFrameAfterVideoCapture))
 
         if let focusImage { self.cameraFocusView.image = focusImage }
         if let focusImageColor { self.cameraFocusView.tintColor = focusImageColor }
@@ -34,7 +34,7 @@ public extension CameraManager {
     }
 }
 private extension CameraManager.Attributes {
-    init(_ outputType: CameraOutputType?, _ cameraPosition: CameraPosition?, _ cameraFilters: [CIFilter]?, _ resolution: AVCaptureSession.Preset?, _ frameRate: Int32?, _ flashMode: CameraFlashMode?, _ isGridVisible: Bool?) { self.init()
+    init(_ outputType: CameraOutputType?, _ cameraPosition: CameraPosition?, _ cameraFilters: [CIFilter]?, _ resolution: AVCaptureSession.Preset?, _ frameRate: Int32?, _ flashMode: CameraFlashMode?, _ isGridVisible: Bool?, presentFrameAfterVideoCapture: Bool?) { self.init()
         if let outputType { self.outputType = outputType }
         if let cameraPosition { self.cameraPosition = cameraPosition }
         if let cameraFilters { self.cameraFilters = cameraFilters }
@@ -42,5 +42,6 @@ private extension CameraManager.Attributes {
         if let frameRate { self.frameRate = frameRate }
         if let flashMode { self.flashMode = flashMode }
         if let isGridVisible { self.isGridVisible = isGridVisible }
+        if let presentFrameAfterVideoCapture { self.presentFrameAfterVideoCapture = presentFrameAfterVideoCapture }
     }
 }

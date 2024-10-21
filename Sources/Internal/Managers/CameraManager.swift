@@ -36,6 +36,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var recordingTime: MTime = .zero
         var deviceOrientation: AVCaptureVideoOrientation = .portrait
         var userBlockedScreenRotation: Bool = false
+        var presentFrameAfterVideoCapture: Bool = true
     }
     @Published private(set) var attributes: Attributes
 
@@ -704,7 +705,9 @@ private extension CameraManager {
         startRecordingTimer()
     }}
     func stopRecording() {
-        presentLastFrame()
+        if attributes.presentFrameAfterVideoCapture {
+            presentLastFrame()
+        }
         videoOutput?.stopRecording()
         updateIsRecording(false)
         stopRecordingTimer()
