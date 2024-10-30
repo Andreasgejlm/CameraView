@@ -29,25 +29,55 @@ public extension MCameraMedia {
 // MARK: - Image Initialiser
 extension MCameraMedia {
     static func create(imageData: AVCapturePhoto, orientation: CGImagePropertyOrientation, filters: [CIFilter]) -> Self? {
-        guard let imageData = imageData.fileDataRepresentation(),
-              let ciImage = CIImage(data: imageData)
+        // Get the original metadata from AVCapturePhoto
+        let metadata = imageData.metadata
+        print(metadata)
+        
+        // Use CGImageSource to maintain metadata through the conversion process
+        guard let photoData = imageData.fileDataRepresentation(),
+              let source = CGImageSourceCreateWithData(photoData as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any]
         else { return nil }
-
+        
+        // Create CIImage while preserving metadata
+        guard let ciImage = CIImage(data: photoData, options: [
+            .properties: properties,
+            .applyOrientationProperty: true
+        ]) else { return nil }
+        
         let capturedCIImage = prepareCIImage(ciImage, filters)
-        let capturedCGImage = prepareCGImage(capturedCIImage)
-        let capturedUIImage = prepareUIImage(capturedCGImage, orientation)
-
-        let capturedMedia = MCameraMedia(data: capturedUIImage)
+        
+        // Create CGImage while preserving metadata
+        guard let capturedCGImage = prepareCGImage(capturedCIImage) else { return nil }
+        
+        // Create final UIImage with metadata
+        guard let finalImage = createUIImageWithMetadata(
+            cgImage: capturedCGImage,
+            orientation: orientation,
+            metadata: metadata
+        ) else { return nil }
+        
+        let capturedMedia = MCameraMedia(data: finalImage)
         return capturedMedia
     }
 }
 private extension MCameraMedia {
     static func prepareCIImage(_ ciImage: CIImage, _ filters: [CIFilter]) -> CIImage {
-        ciImage.applyingFilters(filters)
+        var processedImage = ciImage
+        for filter in filters {
+            filter.setValue(processedImage, forKey: kCIInputImageKey)
+            if let outputImage = filter.outputImage {
+                processedImage = outputImage
+            }
+        }
+        return processedImage
     }
+    
     static func prepareCGImage(_ ciImage: CIImage) -> CGImage? {
-        CIContext().createCGImage(ciImage, from: ciImage.extent)
+        let context = CIContext(options: [.workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!])
+        return context.createCGImage(ciImage, from: ciImage.extent)
     }
+
     static func prepareUIImage(_ cgImage: CGImage?, _ orientation: CGImagePropertyOrientation) -> UIImage? {
         guard let cgImage else { return nil }
 
