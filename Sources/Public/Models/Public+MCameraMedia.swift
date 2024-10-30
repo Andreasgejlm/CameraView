@@ -51,11 +51,7 @@ extension MCameraMedia {
         guard let capturedCGImage = prepareCGImage(capturedCIImage) else { return nil }
         
         // Create final UIImage with metadata
-        guard let finalImage = createUIImageWithMetadata(
-            cgImage: capturedCGImage,
-            orientation: orientation,
-            metadata: metadata
-        ) else { return nil }
+        guard let finalImage = prepareUIImage(capturedCGImage, orientation)
         
         let capturedMedia = MCameraMedia(data: finalImage)
         return capturedMedia
