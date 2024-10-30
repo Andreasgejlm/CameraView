@@ -743,8 +743,6 @@ private extension CameraManager {
 
 extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: (any Swift.Error)?) { Task { @MainActor in
-        print(self.videoOutput?.metadata)
-        
         attributes.capturedMedia = await .create(videoData: outputFileURL, filters: attributes.cameraFilters)
     }}
     
