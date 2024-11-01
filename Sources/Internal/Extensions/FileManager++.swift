@@ -22,10 +22,13 @@ extension FileManager {
 }
 private extension FileManager {
     static func createFileUrl() -> URL? {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        if let saveFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
             .first?
-            .appendingPathComponent(".temp")
-            .appendingPathComponent(videoPath)
+            .appendingPathComponent(".temp") {
+            try? FileManager.default.createDirectory(at: saveFolder, withIntermediateDirectories: true)
+            return saveFolder.appendingPathComponent(videoPath)
+        }
+        return nil
     }
     static func clearPlaceIfTaken(_ url: URL) {
         try? FileManager.default.removeItem(at: url)
