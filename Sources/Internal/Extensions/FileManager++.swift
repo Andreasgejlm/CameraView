@@ -24,6 +24,7 @@ private extension FileManager {
     static func createFileUrl() -> URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
             .first?
+            .appendingPathComponent(".temp")
             .appendingPathComponent(videoPath)
     }
     static func clearPlaceIfTaken(_ url: URL) {
@@ -31,5 +32,5 @@ private extension FileManager {
     }
 }
 private extension FileManager {
-    static var videoPath: String { "mijick-camera-view-video-output.mp4" }
+    static var videoPath: String { "video.mp4" }
 }
