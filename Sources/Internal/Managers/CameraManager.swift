@@ -44,6 +44,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
     private var frontCamera: AVCaptureDevice?
     private var backCamera: AVCaptureDevice?
     private var microphone: AVCaptureDevice?
+    private var zoomFactorMultipliter: CGFloat = 1.0
 
     // MARK: Input
     private var captureSession: AVCaptureSession!
@@ -132,7 +133,7 @@ extension CameraManager {
         attributes.capturedMedia = nil
     }
     func resetZoomAndTorch() {
-        attributes.zoomFactor = 1.0
+        attributes.zoomFactor = 1.0 * zoomFactorMultipliter
         attributes.torchMode = .off
     }
 }
@@ -213,8 +214,12 @@ private extension CameraManager {
     func initialiseDevices() {
         if let tripleCamera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
             backCamera = tripleCamera
+            zoomFactorMultipliter = 2.0
+        } else if let dualCamera = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
+            backCamera = dualCamera
         } else if let dualCamera = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
             backCamera = dualCamera
+            zoomFactorMultipliter = 2.0
         } else {
             backCamera = AVCaptureDevice.default(for: .video)
         }
@@ -443,7 +448,7 @@ private extension CameraManager {
 // MARK: - Changing Zoom Factor
 extension CameraManager {
     func changeZoomFactor(_ value: CGFloat) throws { if let device = getDevice(attributes.cameraPosition), !isChanging {
-        let zoomFactor = calculateZoomFactor(value, device)
+        let zoomFactor = calculateZoomFactor(value, device) * zoomFactorMultipliter
 
         try setVideoZoomFactor(zoomFactor, device)
         updateZoomFactor(zoomFactor)
