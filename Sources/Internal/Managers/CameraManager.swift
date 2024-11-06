@@ -236,7 +236,7 @@ private extension CameraManager {
             case .builtInTripleCamera:
                 device.videoZoomFactor = 2.0
             default:
-                device.videoZoomFactor = 1.0
+                device.videoZoomFactor = 2.0
             }
             device.unlockForConfiguration()
         } catch {
