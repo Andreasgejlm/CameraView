@@ -23,7 +23,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var outputType: CameraOutputType = .photo
         var cameraPosition: CameraPosition = .back
         var cameraFilters: [CIFilter] = []
-        var zoomFactor: CGFloat = 1.0
+        var zoomFactor: CGFloat = 2.0
         var flashMode: CameraFlashMode = .off
         var torchMode: CameraTorchMode = .off
         var cameraExposure: CameraExposure = .init()
