@@ -468,6 +468,7 @@ private extension CameraManager {
     }}
     func setCameraFocus(_ touchPoint: CGPoint, _ device: AVCaptureDevice) throws {
         let focusPoint = cameraLayer.captureDevicePointConverted(fromLayerPoint: touchPoint)
+        print(touchPoint, focusPoint)
         try configureCameraFocus(focusPoint, device)
     }
 }
@@ -493,12 +494,10 @@ private extension CameraManager {
 }
 private extension CameraManager {
     func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isFocusPointOfInterestSupported {
-    
         device.focusPointOfInterest = focusPoint
         device.focusMode = .autoFocus
     }}
     func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isExposurePointOfInterestSupported {
-        print(focusPoint)
         device.exposurePointOfInterest = focusPoint
         device.exposureMode = .autoExpose
     }}
