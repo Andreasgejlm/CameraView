@@ -23,7 +23,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var outputType: CameraOutputType = .photo
         var cameraPosition: CameraPosition = .back
         var cameraFilters: [CIFilter] = []
-        var zoomFactor: CGFloat = 2.0
+        var zoomFactor: CGFloat = 3.0
         var flashMode: CameraFlashMode = .off
         var torchMode: CameraTorchMode = .off
         var cameraExposure: CameraExposure = .init()
@@ -466,6 +466,7 @@ private extension CameraManager {
 // MARK: - Changing Zoom Factor
 extension CameraManager {
     func changeZoomFactor(_ value: CGFloat) throws { if let device = getDevice(attributes.cameraPosition), !isChanging {
+        print(value, attributes.zoomFactor)
         let zoomFactor = calculateZoomFactor(value, device)
 
         try setVideoZoomFactor(zoomFactor, device)
@@ -492,7 +493,7 @@ private extension CameraManager {
         device.minAvailableVideoZoomFactor
     }
     func getMaxZoomLevel(_ device: AVCaptureDevice) -> CGFloat {
-        min(device.maxAvailableVideoZoomFactor, 3)
+        min(device.maxAvailableVideoZoomFactor, 5)
     }
 }
 
