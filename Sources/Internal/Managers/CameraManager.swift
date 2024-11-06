@@ -229,7 +229,39 @@ private extension CameraManager {
         }
         resetBackCameraScaledZoom()
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
+        
+        setAutoExposureAndWhiteBalance([backCamera, frontCamera])
+
+        
         microphone = .default(for: .audio)
+    }
+    
+    func setAutoExposureAndWhiteBalance(_ cameras: [AVCaptureDevice?]) {
+        for camera in cameras {
+            guard let camera else { continue }
+            do {
+                try camera.lockForConfiguration()
+                
+                // Enable continuous auto exposure if supported
+                if camera.isExposureModeSupported(.continuousAutoExposure) {
+                    camera.exposureMode = .continuousAutoExposure
+                }
+                
+                // Enable continuous auto white balance if supported
+                if camera.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+                    camera.whiteBalanceMode = .continuousAutoWhiteBalance
+                }
+                
+                // Optional: Set HDR mode to auto-adjust if available
+                if camera.isVideoHDREnabled {
+                    camera.automaticallyAdjustsVideoHDREnabled = true
+                }
+                
+                camera.unlockForConfiguration()
+            } catch {
+                print("Failed to configure \(camera.localizedName): \(error)")
+            }
+        }
     }
     
     func resetBackCameraScaledZoom() {
@@ -453,26 +485,41 @@ private extension CameraManager {
             UIView.animate(withDuration: 0.5, delay: 3.5) { [self] in cameraFocusView.alpha = 0 }
         }
     }
-    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws { try withLockingDeviceForConfiguration(device) { device in
-        setFocusPointOfInterest(focusPoint, device)
-        setExposurePointOfInterest(focusPoint, device)
-    }}
+    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws {
+        try withLockingDeviceForConfiguration(device) { device in
+            // Set focus and exposure points
+            setFocusPointOfInterest(focusPoint, device)
+            setExposurePointOfInterest(focusPoint, device)
+            
+            // Switch to continuous modes for smoother adaptation
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            }
+        }
+    }
 }
 private extension CameraManager {
-    func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isFocusPointOfInterestSupported {
-        device.focusPointOfInterest = focusPoint
-        device.focusMode = .autoFocus
-    }}
-    func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isExposurePointOfInterestSupported {
-        device.exposurePointOfInterest = focusPoint
-        device.exposureMode = .autoExpose
-    }}
+    func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) {
+        if device.isFocusPointOfInterestSupported {
+            device.focusPointOfInterest = focusPoint
+            device.focusMode = .autoFocus  // Initial tap focus
+        }
+    }
+    
+    func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) {
+        if device.isExposurePointOfInterestSupported {
+            device.exposurePointOfInterest = focusPoint
+            device.exposureMode = .autoExpose  // Initial tap exposure
+        }
+    }
 }
 
 // MARK: - Changing Zoom Factor
 extension CameraManager {
     func changeZoomFactor(_ value: CGFloat) throws { if let device = getDevice(attributes.cameraPosition), !isChanging {
-        print(value, attributes.zoomFactor)
         let zoomFactor = calculateZoomFactor(value, device)
 
         try setVideoZoomFactor(zoomFactor, device)
