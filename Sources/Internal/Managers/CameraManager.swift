@@ -195,6 +195,7 @@ private extension CameraManager {
         cameraLayer = .init(session: captureSession)
         cameraLayer.videoGravity = .resizeAspectFill
         cameraLayer.isHidden = true
+        cameraLayer.frame = cameraView.bounds
 
         cameraView.layer.addSublayer(cameraLayer)
     }
