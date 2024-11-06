@@ -493,12 +493,14 @@ private extension CameraManager {
 }
 private extension CameraManager {
     func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isFocusPointOfInterestSupported {
+    
         device.focusPointOfInterest = focusPoint
-        device.focusMode = .continuousAutoFocus
+        device.focusMode = .autoFocus
     }}
     func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isExposurePointOfInterestSupported {
+        print(focusPoint)
         device.exposurePointOfInterest = focusPoint
-        device.exposureMode = .continuousAutoExposure
+        device.exposureMode = .autoExpose
     }}
 }
 
