@@ -213,20 +213,15 @@ private extension CameraManager {
     func initialiseDevices() {
         if let tripleCamera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
             backCamera = tripleCamera
-            try? backCamera?.lockForConfiguration()
-            backCamera?.videoZoomFactor = 2.0
-            backCamera?.unlockForConfiguration()
+            try? setVideoZoomFactor(2.0, backCamera!)
         } else if let dualCamera = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
             backCamera = dualCamera
         } else if let dualCamera = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
             backCamera = dualCamera
-            try? backCamera?.lockForConfiguration()
-            backCamera?.videoZoomFactor = 2.0
-            backCamera?.unlockForConfiguration()
+            try? setVideoZoomFactor(2.0, backCamera!)
         } else {
             backCamera = AVCaptureDevice.default(for: .video)
         }
-        if let zoomFactor = backCamera?.videoZoomFactor { updateZoomFactor(zoomFactor) }
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
         microphone = .default(for: .audio)
     }
