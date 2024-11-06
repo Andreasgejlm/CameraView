@@ -259,6 +259,7 @@ private extension CameraManager {
                 
                 camera.unlockForConfiguration()
             } catch {
+                camera.unlockForConfiguration()
                 print("Failed to configure \(camera.localizedName): \(error)")
             }
         }
@@ -485,36 +486,20 @@ private extension CameraManager {
             UIView.animate(withDuration: 0.5, delay: 3.5) { [self] in cameraFocusView.alpha = 0 }
         }
     }
-    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws {
-        try withLockingDeviceForConfiguration(device) { device in
-            // Set focus and exposure points
-            setFocusPointOfInterest(focusPoint, device)
-            setExposurePointOfInterest(focusPoint, device)
-            
-            // Switch to continuous modes for smoother adaptation
-            if device.isFocusModeSupported(.continuousAutoFocus) {
-                device.focusMode = .continuousAutoFocus
-            }
-            if device.isExposureModeSupported(.continuousAutoExposure) {
-                device.exposureMode = .continuousAutoExposure
-            }
-        }
-    }
+    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws { try withLockingDeviceForConfiguration(device) { device in
+        setFocusPointOfInterest(focusPoint, device)
+        setExposurePointOfInterest(focusPoint, device)
+    }}
 }
 private extension CameraManager {
-    func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) {
-        if device.isFocusPointOfInterestSupported {
-            device.focusPointOfInterest = focusPoint
-            device.focusMode = .autoFocus  // Initial tap focus
-        }
-    }
-    
-    func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) {
-        if device.isExposurePointOfInterestSupported {
-            device.exposurePointOfInterest = focusPoint
-            device.exposureMode = .autoExpose  // Initial tap exposure
-        }
-    }
+    func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isFocusPointOfInterestSupported {
+        device.focusPointOfInterest = focusPoint
+        device.focusMode = .autoFocus
+    }}
+    func setExposurePointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isExposurePointOfInterestSupported {
+        device.exposurePointOfInterest = focusPoint
+        device.exposureMode = .autoExpose
+    }}
 }
 
 // MARK: - Changing Zoom Factor
