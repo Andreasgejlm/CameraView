@@ -132,7 +132,8 @@ extension CameraManager {
         attributes.capturedMedia = nil
     }
     func resetZoomAndTorch() {
-        attributes.zoomFactor = 1.0
+        resetScaledZoom(backCamera)
+        attributes.zoomFactor = 2.0
         attributes.torchMode = .off
     }
 }
@@ -213,18 +214,36 @@ private extension CameraManager {
     func initialiseDevices() {
         if let tripleCamera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
             backCamera = tripleCamera
-            try? setVideoZoomFactor(2.0, backCamera!)
         } else if let dualCamera = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
             backCamera = dualCamera
         } else if let dualCamera = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
             backCamera = dualCamera
-            try? setVideoZoomFactor(2.0, backCamera!)
         } else {
             backCamera = AVCaptureDevice.default(for: .video)
         }
+        resetScaledZoom(backCamera)
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
         microphone = .default(for: .audio)
     }
+    
+    func resetScaledZoom(_ device: AVCaptureDevice?) {
+        guard let device else { return }
+        do {
+            try device.lockForConfiguration()
+            switch device.deviceType {
+            case .builtInDualWideCamera:
+                device.videoZoomFactor = 2.0
+            case .builtInTripleCamera:
+                device.videoZoomFactor = 2.0
+            default:
+                device.videoZoomFactor = 1.0
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print(error)
+        }
+    }
+    
     func initialiseInputs() {
         frontCameraInput = .init(frontCamera)
         backCameraInput = .init(backCamera)
