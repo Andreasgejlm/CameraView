@@ -211,8 +211,14 @@ private extension CameraManager {
         cameraGridView.addToParent(cameraView)
     }
     func initialiseDevices() {
+        if let tripleCamera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
+            backCamera = tripleCamera
+        } else if let dualCamera = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
+            backCamera = dualCamera
+        } else {
+            backCamera = AVCaptureDevice.default(for: .video)
+        }
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
-        backCamera = .default(for: .video)
         microphone = .default(for: .audio)
     }
     func initialiseInputs() {
