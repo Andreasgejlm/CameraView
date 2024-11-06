@@ -213,7 +213,7 @@ private extension CameraManager {
     func initialiseDevices() {
         if let tripleCamera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
             backCamera = tripleCamera
-        } else if let dualCamera = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
+        } else if let dualCamera = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
             backCamera = dualCamera
         } else {
             backCamera = AVCaptureDevice.default(for: .video)
