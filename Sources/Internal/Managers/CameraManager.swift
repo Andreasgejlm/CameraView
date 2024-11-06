@@ -23,7 +23,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var outputType: CameraOutputType = .photo
         var cameraPosition: CameraPosition = .back
         var cameraFilters: [CIFilter] = []
-        var zoomFactor: CGFloat = 3.0
+        var zoomFactor: CGFloat = 1.0
         var flashMode: CameraFlashMode = .off
         var torchMode: CameraTorchMode = .off
         var cameraExposure: CameraExposure = .init()
@@ -132,8 +132,13 @@ extension CameraManager {
         attributes.capturedMedia = nil
     }
     func resetZoomAndTorch() {
-        resetScaledZoom(backCamera)
-        attributes.zoomFactor = 2.0
+        switch attributes.cameraPosition {
+        case .back:
+            resetBackCameraScaledZoom()
+            attributes.zoomFactor = backCamera!.videoZoomFactor
+        case .front:
+            attributes.zoomFactor = 1.0
+        }
         attributes.torchMode = .off
     }
 }
@@ -160,7 +165,8 @@ extension CameraManager {
             try setupFrameRecorder()
             try setupCameraAttributes()
             try setupFrameRate()
-
+            resetBackCameraScaledZoom()
+            attributes.zoomFactor = backCamera!.videoZoomFactor
             startCaptureSession()
         } catch { print("CANNOT SETUP CAMERA: \(error)") }
     }
@@ -221,24 +227,24 @@ private extension CameraManager {
         } else {
             backCamera = AVCaptureDevice.default(for: .video)
         }
-        resetScaledZoom(backCamera)
+        resetBackCameraScaledZoom()
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
         microphone = .default(for: .audio)
     }
     
-    func resetScaledZoom(_ device: AVCaptureDevice?) {
-        guard let device else { return }
+    func resetBackCameraScaledZoom() {
+        guard let backCamera else { return }
         do {
-            try device.lockForConfiguration()
-            switch device.deviceType {
+            try backCamera.lockForConfiguration()
+            switch backCamera.deviceType {
             case .builtInDualWideCamera:
-                device.videoZoomFactor = 2.0
+                backCamera.videoZoomFactor = 2.0
             case .builtInTripleCamera:
-                device.videoZoomFactor = 2.0
+                backCamera.videoZoomFactor = 2.0
             default:
-                device.videoZoomFactor = 2.0
+                backCamera.videoZoomFactor = 1.0
             }
-            device.unlockForConfiguration()
+            backCamera.unlockForConfiguration()
         } catch {
             print(error)
         }
