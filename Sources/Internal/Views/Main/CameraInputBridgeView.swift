@@ -58,8 +58,6 @@ private extension UICameraInputView {
         view.addGestureRecognizer(tapRecognizer)
     }
     func setupPinchGesture() {
-        print("Setting punch")
-
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
         view.addGestureRecognizer(pinchRecognizer)
     }
@@ -84,7 +82,6 @@ private extension UICameraInputView {
 // MARK: Pinch
 private extension UICameraInputView {
     @objc func handlePinchGesture(_ pinch: UIPinchGestureRecognizer) {
-        print("Changed, i think", pinch.state)
         if pinch.state == .changed {
             let desiredZoomFactor = cameraManager.attributes.zoomFactor + atan2(pinch.velocity, 33)
             changeZoomFactor(desiredZoomFactor)
