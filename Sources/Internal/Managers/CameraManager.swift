@@ -269,15 +269,22 @@ private extension CameraManager {
     
     func resetBackCameraScaledZoom() {
         guard let backCamera else { return }
+        let currectZoomFactor = backCamera.videoZoomFactor
         do {
             try backCamera.lockForConfiguration()
             switch backCamera.deviceType {
             case .builtInDualWideCamera:
-                backCamera.videoZoomFactor = 2.0
+                if currectZoomFactor != 2.0 {
+                    backCamera.videoZoomFactor = 2.0
+                }
             case .builtInTripleCamera:
-                backCamera.videoZoomFactor = 2.0
+                if currectZoomFactor != 2.0 {
+                    backCamera.videoZoomFactor = 2.0
+                }
             default:
-                backCamera.videoZoomFactor = 1.0
+                if currectZoomFactor != 1.0 {
+                    backCamera.videoZoomFactor = 1.0
+                }
             }
             backCamera.unlockForConfiguration()
         } catch {
