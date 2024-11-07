@@ -434,8 +434,8 @@ private extension CameraManager {
         captureSession.removeInput(input)
     }}
     func updateCameraPosition(_ position: CameraPosition) {
-        attributes.cameraPosition = position
         resetZoomAndTorch(position)
+        attributes.cameraPosition = position
     }
 }
 private extension CameraManager {
