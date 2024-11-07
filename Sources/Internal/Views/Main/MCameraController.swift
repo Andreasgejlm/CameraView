@@ -26,7 +26,6 @@ public struct MCameraController: View {
         .onAppear(perform: onAppear)
         .onDisappear(perform: onDisappear)
         .onChange(of: cameraManager.attributes.capturedMedia) { new in
-            print("Media updated")
             onMediaCaptured(new)
         }
     }

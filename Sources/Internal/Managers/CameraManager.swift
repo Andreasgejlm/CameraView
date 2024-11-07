@@ -469,7 +469,6 @@ private extension CameraManager {
     }}
     func setCameraFocus(_ touchPoint: CGPoint, _ device: AVCaptureDevice) throws {
         let focusPoint = cameraLayer.captureDevicePointConverted(fromLayerPoint: touchPoint)
-        print(touchPoint, focusPoint)
         try configureCameraFocus(focusPoint, device)
     }
 }
@@ -813,6 +812,7 @@ private extension CameraManager {
 
 extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: (any Swift.Error)?) { Task { @MainActor in
+        attributes.capturedMedia = nil
         attributes.capturedMedia = await .create(videoData: outputFileURL, filters: attributes.cameraFilters)
     }}
     
