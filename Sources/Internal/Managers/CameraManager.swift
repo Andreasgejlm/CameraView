@@ -131,8 +131,9 @@ extension CameraManager {
     func resetCapturedMedia() {
         attributes.capturedMedia = nil
     }
-    func resetZoomAndTorch() {
-        switch attributes.cameraPosition {
+    func resetZoomAndTorch(_ position: CameraPosition? = nil) {
+        let currentPosition = position ?? attributes.cameraPosition
+        switch currentPosition {
         case .back:
             resetBackCameraScaledZoom()
             attributes.zoomFactor = backCamera!.videoZoomFactor
@@ -434,7 +435,7 @@ private extension CameraManager {
     }}
     func updateCameraPosition(_ position: CameraPosition) {
         attributes.cameraPosition = position
-        resetZoomAndTorch()
+        resetZoomAndTorch(position)
     }
 }
 private extension CameraManager {
