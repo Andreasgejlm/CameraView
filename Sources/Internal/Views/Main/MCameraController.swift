@@ -25,7 +25,10 @@ public struct MCameraController: View {
         .animation(.defaultEase, value: cameraManager.attributes.capturedMedia)
         .onAppear(perform: onAppear)
         .onDisappear(perform: onDisappear)
-        .onChange(of: cameraManager.attributes.capturedMedia, perform: onMediaCaptured)
+        .onChange(of: cameraManager.attributes.capturedMedia) { new in
+            print("Media updated")
+            onMediaCaptured(new)
+        }
     }
 }
 private extension MCameraController {
