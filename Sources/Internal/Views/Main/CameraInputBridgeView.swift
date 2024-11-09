@@ -99,6 +99,7 @@ private extension UICameraInputView {
 // MARK: Pinch
 private extension UICameraInputView {
     @objc @MainActor func handlePinchGesture(_ pinch: UIPinchGestureRecognizer) {
+        os_log("Pinch gesture state: %{public}@", log: log, type: .info, "\(pinch.state.rawValue)")
         if pinch.state == .changed {
             let desiredZoomFactor = cameraManager.attributes.zoomFactor + atan2(pinch.velocity, 33)
             os_log("Pinch gesture recognized with desired zoom factor: %{public}f", log: log, type: .info, desiredZoomFactor)
