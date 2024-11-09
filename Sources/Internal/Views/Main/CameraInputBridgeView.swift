@@ -10,6 +10,7 @@
 
 import SwiftUI
 import UIKit
+import os.log
 
 struct CameraInputBridgeView: UIViewRepresentable {
     let cameraManager: CameraManager
@@ -34,6 +35,7 @@ extension CameraInputBridgeView: Equatable {
 @MainActor
 fileprivate class UICameraInputView: UIViewController {
     var cameraManager: CameraManager!
+    private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "GestureRecognizers")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +63,7 @@ private extension UICameraInputView {
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapGesture))
             tapRecognizer.cancelsTouchesInView = false
             self.view.addGestureRecognizer(tapRecognizer)
-            print("Tap gesture recognizer added on main thread")
+            os_log("Tap gesture recognizer added on main thread", log: self.log, type: .info)
         }
     }
     
@@ -70,7 +72,7 @@ private extension UICameraInputView {
             let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.handlePinchGesture))
             pinchRecognizer.cancelsTouchesInView = false
             self.view.addGestureRecognizer(pinchRecognizer)
-            print("Pinch gesture recognizer added on main thread")
+            os_log("Pinch gesture recognizer added on main thread", log: self.log, type: .info)
         }
     }
 }
@@ -81,7 +83,7 @@ private extension UICameraInputView {
 private extension UICameraInputView {
     @objc @MainActor func handleTapGesture(_ tap: UITapGestureRecognizer) {
         let touchPoint = tap.location(in: view)
-        print("Tap gesture recognized at point: \(touchPoint)")
+        os_log("Tap gesture recognized at point: %{public}@", log: log, type: .info, "\(touchPoint)")
         setCameraFocus(touchPoint)
     }
     
@@ -89,7 +91,7 @@ private extension UICameraInputView {
         do {
             try cameraManager.setCameraFocus(touchPoint)
         } catch {
-            print("Failed to set camera focus: \(error)")
+            os_log("Failed to set camera focus: %{public}@", log: log, type: .error, "\(error)")
         }
     }
 }
@@ -99,7 +101,7 @@ private extension UICameraInputView {
     @objc @MainActor func handlePinchGesture(_ pinch: UIPinchGestureRecognizer) {
         if pinch.state == .changed {
             let desiredZoomFactor = cameraManager.attributes.zoomFactor + atan2(pinch.velocity, 33)
-            print("Pinch gesture recognized with desired zoom factor: \(desiredZoomFactor)")
+            os_log("Pinch gesture recognized with desired zoom factor: %{public}f", log: log, type: .info, desiredZoomFactor)
             changeZoomFactor(desiredZoomFactor)
         }
     }
@@ -108,7 +110,7 @@ private extension UICameraInputView {
         do {
             try cameraManager.changeZoomFactor(desiredZoomFactor)
         } catch {
-            print("Failed to change zoom factor: \(error)")
+            os_log("Failed to change zoom factor: %{public}@", log: log, type: .error, "\(error)")
         }
     }
 }
