@@ -57,17 +57,21 @@ private extension UICameraInputView {
     }
     
     func setupTapGesture() {
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
-        tapRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapRecognizer)
-        print("Tap gesture recognizer added")
+        DispatchQueue.main.async {
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapGesture))
+            tapRecognizer.cancelsTouchesInView = false
+            self.view.addGestureRecognizer(tapRecognizer)
+            print("Tap gesture recognizer added on main thread")
+        }
     }
     
     func setupPinchGesture() {
-        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
-        pinchRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(pinchRecognizer)
-        print("Pinch gesture recognizer added")
+        DispatchQueue.main.async {
+            let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.handlePinchGesture))
+            pinchRecognizer.cancelsTouchesInView = false
+            self.view.addGestureRecognizer(pinchRecognizer)
+            print("Pinch gesture recognizer added on main thread")
+        }
     }
 }
 
