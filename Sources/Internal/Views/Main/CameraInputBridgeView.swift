@@ -8,15 +8,16 @@
 //
 //  Copyright ©2024 Mijick. Licensed under MIT License.
 
-
 import SwiftUI
+import UIKit
 
 struct CameraInputBridgeView: UIViewRepresentable {
     let cameraManager: CameraManager
     private var inputView: UICameraInputView = .init()
-
+    
     init(_ cameraManager: CameraManager) { self.cameraManager = cameraManager }
 }
+
 extension CameraInputBridgeView {
     func makeUIView(context: Context) -> some UIView {
         inputView.cameraManager = cameraManager
@@ -24,26 +25,27 @@ extension CameraInputBridgeView {
     }
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
+
 extension CameraInputBridgeView: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool { true }
 }
 
-
 // MARK: - UIViewController
+@MainActor
 fileprivate class UICameraInputView: UIViewController {
     var cameraManager: CameraManager!
-
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupCameraManager()
         setupTapGesture()
         setupPinchGesture()
     }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        
         cameraManager.fixCameraRotation()
     }
 }
@@ -53,10 +55,12 @@ private extension UICameraInputView {
     func setupCameraManager() {
         cameraManager.setup(in: view)
     }
+    
     func setupTapGesture() {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
         view.addGestureRecognizer(tapRecognizer)
     }
+    
     func setupPinchGesture() {
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
         view.addGestureRecognizer(pinchRecognizer)
@@ -71,11 +75,13 @@ private extension UICameraInputView {
         let touchPoint = tap.location(in: view)
         setCameraFocus(touchPoint)
     }
-}
-private extension UICameraInputView {
+    
     func setCameraFocus(_ touchPoint: CGPoint) {
-        do { try cameraManager.setCameraFocus(touchPoint) }
-        catch {}
+        do {
+            try cameraManager.setCameraFocus(touchPoint)
+        } catch {
+            // Handle error
+        }
     }
 }
 
@@ -87,10 +93,12 @@ private extension UICameraInputView {
             changeZoomFactor(desiredZoomFactor)
         }
     }
-}
-private extension UICameraInputView {
+    
     func changeZoomFactor(_ desiredZoomFactor: CGFloat) {
-        do { try cameraManager.changeZoomFactor(desiredZoomFactor) }
-        catch {}
+        do {
+            try cameraManager.changeZoomFactor(desiredZoomFactor)
+        } catch {
+            // Handle error
+        }
     }
 }
