@@ -58,12 +58,16 @@ private extension UICameraInputView {
     
     func setupTapGesture() {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+        tapRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapRecognizer)
+        print("Tap gesture recognizer added")
     }
     
     func setupPinchGesture() {
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
+        pinchRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(pinchRecognizer)
+        print("Pinch gesture recognizer added")
     }
 }
 
@@ -71,8 +75,9 @@ private extension UICameraInputView {
 
 // MARK: Tap
 private extension UICameraInputView {
-    @objc func handleTapGesture(_ tap: UITapGestureRecognizer) {
+    @objc @MainActor func handleTapGesture(_ tap: UITapGestureRecognizer) {
         let touchPoint = tap.location(in: view)
+        print("Tap gesture recognized at point: \(touchPoint)")
         setCameraFocus(touchPoint)
     }
     
@@ -80,16 +85,17 @@ private extension UICameraInputView {
         do {
             try cameraManager.setCameraFocus(touchPoint)
         } catch {
-            // Handle error
+            print("Failed to set camera focus: \(error)")
         }
     }
 }
 
 // MARK: Pinch
 private extension UICameraInputView {
-    @objc func handlePinchGesture(_ pinch: UIPinchGestureRecognizer) {
+    @objc @MainActor func handlePinchGesture(_ pinch: UIPinchGestureRecognizer) {
         if pinch.state == .changed {
             let desiredZoomFactor = cameraManager.attributes.zoomFactor + atan2(pinch.velocity, 33)
+            print("Pinch gesture recognized with desired zoom factor: \(desiredZoomFactor)")
             changeZoomFactor(desiredZoomFactor)
         }
     }
@@ -98,7 +104,7 @@ private extension UICameraInputView {
         do {
             try cameraManager.changeZoomFactor(desiredZoomFactor)
         } catch {
-            // Handle error
+            print("Failed to change zoom factor: \(error)")
         }
     }
 }
