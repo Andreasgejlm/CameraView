@@ -42,6 +42,7 @@ public extension MCameraView {
     func changeHDRMode(_ mode: CameraHDRMode) throws { try cameraManager.changeHDRMode(mode) }
     func changeMirrorOutputMode(_ shouldMirror: Bool) { cameraManager.changeMirrorMode(shouldMirror) }
     func changeGridVisibility(_ shouldShowGrid: Bool) { cameraManager.changeGridVisibility(shouldShowGrid) }
+    func setFocus(_ tagGestureLocation: CGPoint) throws { try cameraManager.setCameraFocus(tagGestureLocation) }
 }
 
 // MARK: - Flags
