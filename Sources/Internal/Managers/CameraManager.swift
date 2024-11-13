@@ -79,6 +79,10 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
     private(set) var frameOrientation: CGImagePropertyOrientation = .right
     private(set) var orientationLocked: Bool = false
     private(set) var initialAttributes: Attributes
+    
+    // MARK: Tasks
+    private var subjectAreaChangeTask: Task<Void, Never>?
+    
 }
 
 // MARK: - Cancellation
@@ -235,8 +239,12 @@ private extension CameraManager {
         frontCamera = .default(.builtInWideAngleCamera, for: .video, position: .front)
         
         setAutoExposureAndWhiteBalance([backCamera, frontCamera])
-
         
+        if let frontCamera, let backCamera {
+            observeSubjectAreaChanges(of: frontCamera)
+            observeSubjectAreaChanges(of: backCamera)
+        }
+
         microphone = .default(for: .audio)
     }
     
@@ -349,8 +357,17 @@ private extension CameraManager {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) { [self] in isRunning = true }
     }
     func setupCameraInput(_ cameraPosition: CameraPosition) throws { switch cameraPosition {
-        case .front: try setupInput(frontCameraInput)
-        case .back: try setupInput(backCameraInput)
+        case .front:
+            try setupInput(frontCameraInput)
+            if let frontCamera {
+                observeSubjectAreaChanges(of: frontCamera)
+            }
+            return
+        case .back:
+            try setupInput(backCameraInput)
+            if let frontCamera {
+                observeSubjectAreaChanges(of: frontCamera)
+            }
     }}
     func setupCameraOutput(_ outputType: CameraOutputType) throws { if let output = getOutput(outputType) {
         try setupOutput(output)
@@ -366,7 +383,7 @@ private extension CameraManager {
         guard let input,
               captureSession.canAddInput(input)
         else { throw Error.cannotSetupInput }
-
+        
         captureSession.addInput(input)
     }
     func setupOutput(_ output: AVCaptureOutput?) throws {
@@ -480,7 +497,7 @@ private extension CameraManager {
     }}
     func setCameraFocus(_ touchPoint: CGPoint, _ device: AVCaptureDevice) throws {
         let focusPoint = cameraLayer.captureDevicePointConverted(fromLayerPoint: touchPoint)
-        try configureCameraFocus(focusPoint, device)
+        try configureCameraFocus(focusPoint, device, userInitiated: true)
     }
 }
 private extension CameraManager {
@@ -498,11 +515,45 @@ private extension CameraManager {
             UIView.animate(withDuration: 0.5, delay: 3.5) { [self] in cameraFocusView.alpha = 0 }
         }
     }
-    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws { try withLockingDeviceForConfiguration(device) { device in
-        setFocusPointOfInterest(focusPoint, device)
-        setExposurePointOfInterest(focusPoint, device)
-    }}
+
+
+    // Observe notifications of type `subjectAreaDidChangeNotification` for the specified device.
+    private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
+        // Cancel the previous observation task.
+        subjectAreaChangeTask?.cancel()
+        subjectAreaChangeTask = Task {
+            // Signal true when this notification occurs.
+            if #available(iOS 15, *) {
+                for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
+                    // Perform a system-initiated focus and expose.
+                    try? configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
+                }
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+    
+    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws { try withLockingDeviceForConfiguration(device) { device in
+            let focusMode = userInitiated ? AVCaptureDevice.FocusMode.autoFocus : .continuousAutoFocus
+            if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
+                device.focusPointOfInterest = focusPoint
+                device.focusMode = focusMode
+            }
+            
+            let exposureMode = userInitiated ? AVCaptureDevice.ExposureMode.autoExpose : .continuousAutoExposure
+            if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
+                device.exposurePointOfInterest = focusPoint
+                device.exposureMode = exposureMode
+            }
+            // Enable subject-area change monitoring when performing a user-initiated automatic focus and exposure operation.
+            // If this method enables change monitoring, when the device's subject area changes, the app calls this method a
+            // second time and resets the device to continuous automatic focus and exposure.
+            device.isSubjectAreaChangeMonitoringEnabled = userInitiated
+        }
+    }
 }
+
 private extension CameraManager {
     func setFocusPointOfInterest(_ focusPoint: CGPoint, _ device: AVCaptureDevice) { if device.isFocusPointOfInterestSupported {
         device.focusPointOfInterest = focusPoint
