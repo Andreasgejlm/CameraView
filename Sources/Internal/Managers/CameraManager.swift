@@ -531,8 +531,11 @@ private extension CameraManager {
             }
         }
         
+        print(observer)
+        
         subjectAreaChangeTask = Task {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                print("Removing observer")
                 NotificationCenter.default.removeObserver(observer)
             }
         }
