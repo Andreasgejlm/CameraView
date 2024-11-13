@@ -241,10 +241,7 @@ private extension CameraManager {
         
         setAutoExposureAndWhiteBalance([backCamera, frontCamera])
         
-        if let frontCamera, let backCamera {
-            observeSubjectAreaChanges(of: frontCamera)
-            observeSubjectAreaChanges(of: backCamera)
-        }
+        observeSubjectAreaChanges(of: backCamera!)
 
         microphone = .default(for: .audio)
     }
@@ -360,15 +357,11 @@ private extension CameraManager {
     func setupCameraInput(_ cameraPosition: CameraPosition) throws { switch cameraPosition {
         case .front:
             try setupInput(frontCameraInput)
-            if let frontCamera {
-                observeSubjectAreaChanges(of: frontCamera)
-            }
+            observeSubjectAreaChanges(of: frontCamera!)
             return
         case .back:
             try setupInput(backCameraInput)
-            if let frontCamera {
-                observeSubjectAreaChanges(of: frontCamera)
-            }
+            observeSubjectAreaChanges(of: frontCamera!)
     }}
     func setupCameraOutput(_ outputType: CameraOutputType) throws { if let output = getOutput(outputType) {
         try setupOutput(output)
