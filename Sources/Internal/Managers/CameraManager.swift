@@ -525,6 +525,7 @@ private extension CameraManager {
             // Signal true when this notification occurs.
             if #available(iOS 15, *) {
                 for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
+                    print("SUBJECT AREA CHANGED")
                     // Perform a system-initiated focus and expose.
                     try? configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
                 }
