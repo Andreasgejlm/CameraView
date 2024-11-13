@@ -524,13 +524,18 @@ private extension CameraManager {
         // Remove any existing observer before adding a new one
         if let observer = subjectAreaChangeObserver {
             NotificationCenter.default.removeObserver(observer)
+            print("Removed existing observer")
         }
+        
+        // Enable subject area change monitoring
+        device.isSubjectAreaChangeMonitoringEnabled = true
+        print("Subject Area Change Monitoring Enabled: \(device.isSubjectAreaChangeMonitoringEnabled)")
         
         // Add a new observer and store it in the class property
         subjectAreaChangeObserver = NotificationCenter.default.addObserver(
             forName: AVCaptureDevice.subjectAreaDidChangeNotification,
             object: device,
-            queue: nil
+            queue: OperationQueue.main // Use the main queue
         ) { [weak self] _ in
             print("SUBJECT AREA CHANGED")
             
@@ -545,6 +550,7 @@ private extension CameraManager {
             if let observer = self?.subjectAreaChangeObserver {
                 NotificationCenter.default.removeObserver(observer)
                 self?.subjectAreaChangeObserver = nil
+                print("Observer removed after notification")
             }
         }
         
