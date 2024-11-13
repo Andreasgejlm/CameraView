@@ -538,7 +538,8 @@ private extension CameraManager {
         }
     }
     
-    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws { try withLockingDeviceForConfiguration(device) { device in
+    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws {
+        try withLockingDeviceForConfiguration(device) { device in
             let focusMode = userInitiated ? AVCaptureDevice.FocusMode.autoFocus : .continuousAutoFocus
             if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
                 device.focusPointOfInterest = focusPoint
@@ -554,7 +555,7 @@ private extension CameraManager {
             // If this method enables change monitoring, when the device's subject area changes, the app calls this method a
             // second time and resets the device to continuous automatic focus and exposure.
             device.isSubjectAreaChangeMonitoringEnabled = userInitiated
-            print("Subject Area Monitoring Enabled: \(userInitiated)")
+            print("Subject Area Monitoring Enabled: \(device.isSubjectAreaChangeMonitoringEnabled)")
         }
     }
 }
