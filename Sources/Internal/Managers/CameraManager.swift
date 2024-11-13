@@ -518,38 +518,15 @@ private extension CameraManager {
     }
 
 
+    // Observe notifications of type `subjectAreaDidChangeNotification` for the specified device.
     private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
         // Cancel the previous observation task.
         subjectAreaChangeTask?.cancel()
-        
-        // Remove any existing observer before adding a new one
-        if let observer = subjectAreaChangeObserver {
-            NotificationCenter.default.removeObserver(observer)
-            print("Removed existing observer")
-        }
-        
-        // Add a new observer and store it in the class property
-        subjectAreaChangeObserver = NotificationCenter.default.addObserver(
-            forName: AVCaptureDevice.subjectAreaDidChangeNotification,
-            object: device,
-            queue: OperationQueue.main // Use the main queue
-        ) { [weak self] _ in
-            print("SUBJECT AREA CHANGED")
-            
-            // Perform a system-initiated focus and expose.
-            do {
-                try self?.configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
-            } catch {
-                print("Error configuring camera focus: \(error)")
-            }
-        }
-        
-        print("Observe: ", device.deviceType)
-        
-        // Store a cleanup task if needed
         subjectAreaChangeTask = Task {
-            await MainActor.run {
-                print("Observer added for subject area change notification")
+            // Signal true when this notification occurs.
+            for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
+                // Perform a system-initiated focus and expose.
+                try? self.configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
             }
         }
     }
