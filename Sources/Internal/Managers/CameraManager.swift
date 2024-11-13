@@ -532,7 +532,7 @@ private extension CameraManager {
         }
         
         subjectAreaChangeTask = Task {
-            await MainActor.run {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 NotificationCenter.default.removeObserver(observer)
             }
         }
@@ -554,6 +554,7 @@ private extension CameraManager {
             // If this method enables change monitoring, when the device's subject area changes, the app calls this method a
             // second time and resets the device to continuous automatic focus and exposure.
             device.isSubjectAreaChangeMonitoringEnabled = userInitiated
+            print("Subject Area Monitoring Enabled: \(userInitiated)")
         }
     }
 }
