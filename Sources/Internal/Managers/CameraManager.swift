@@ -523,6 +523,7 @@ private extension CameraManager {
         subjectAreaChangeTask?.cancel()
         subjectAreaChangeTask = Task {
             // Signal true when this notification occurs.
+            print("NOW CHANGED")
             if #available(iOS 15, *) {
                 for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
                     print("SUBJECT AREA CHANGED")
