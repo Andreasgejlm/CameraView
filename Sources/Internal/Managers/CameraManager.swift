@@ -519,6 +519,7 @@ private extension CameraManager {
 
 
     private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
+        // Cancel the previous observation task.
         subjectAreaChangeTask?.cancel()
         
         // Remove any existing observer before adding a new one
@@ -526,10 +527,6 @@ private extension CameraManager {
             NotificationCenter.default.removeObserver(observer)
             print("Removed existing observer")
         }
-        
-        // Enable subject area change monitoring
-        device.isSubjectAreaChangeMonitoringEnabled = true
-        print("Subject Area Change Monitoring Enabled: \(device.isSubjectAreaChangeMonitoringEnabled)")
         
         // Add a new observer and store it in the class property
         subjectAreaChangeObserver = NotificationCenter.default.addObserver(
@@ -545,14 +542,9 @@ private extension CameraManager {
             } catch {
                 print("Error configuring camera focus: \(error)")
             }
-            
-            // Remove the observer after the first notification is received
-            if let observer = self?.subjectAreaChangeObserver {
-                NotificationCenter.default.removeObserver(observer)
-                self?.subjectAreaChangeObserver = nil
-                print("Observer removed after notification")
-            }
         }
+        
+        print("Observe: ", device.deviceType)
         
         // Store a cleanup task if needed
         subjectAreaChangeTask = Task {
