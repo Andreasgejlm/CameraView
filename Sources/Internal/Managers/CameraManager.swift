@@ -82,7 +82,8 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
     
     // MARK: Tasks
     private var subjectAreaChangeTask: Task<Void, Never>?
-    
+    private var subjectAreaChangeObserver: NSObjectProtocol?
+
 }
 
 // MARK: - Cancellation
@@ -517,26 +518,40 @@ private extension CameraManager {
     }
 
 
-    // Observe notifications of type `subjectAreaDidChangeNotification` for the specified device.
     private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
         subjectAreaChangeTask?.cancel()
         
-        let observer = NotificationCenter.default.addObserver(forName: AVCaptureDevice.subjectAreaDidChangeNotification, object: device, queue: nil) { [weak self] _ in
+        // Remove any existing observer before adding a new one
+        if let observer = subjectAreaChangeObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        
+        // Add a new observer and store it in the class property
+        subjectAreaChangeObserver = NotificationCenter.default.addObserver(
+            forName: AVCaptureDevice.subjectAreaDidChangeNotification,
+            object: device,
+            queue: nil
+        ) { [weak self] _ in
             print("SUBJECT AREA CHANGED")
+            
             // Perform a system-initiated focus and expose.
             do {
                 try self?.configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
             } catch {
                 print("Error configuring camera focus: \(error)")
             }
+            
+            // Remove the observer after the first notification is received
+            if let observer = self?.subjectAreaChangeObserver {
+                NotificationCenter.default.removeObserver(observer)
+                self?.subjectAreaChangeObserver = nil
+            }
         }
         
-        print(observer)
-        
+        // Store a cleanup task if needed
         subjectAreaChangeTask = Task {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                print("Removing observer")
-                NotificationCenter.default.removeObserver(observer)
+            await MainActor.run {
+                print("Observer added for subject area change notification")
             }
         }
     }
