@@ -515,13 +515,19 @@ private extension CameraManager {
     private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
         // Cancel the previous observation task.
         subjectAreaChangeTask?.cancel()
+        print(subjectAreaChangeTask.map(\.isCancelled))
+
         subjectAreaChangeTask = Task {
+            print("In subject task")
             // Signal true when this notification occurs.
             for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
                 // Perform a system-initiated focus and expose.
+                print("Triggered")
                 try? self.configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
             }
         }
+        print(subjectAreaChangeTask.map(\.isCancelled))
+
     }
     
     func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws {
