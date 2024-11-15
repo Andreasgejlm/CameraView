@@ -81,8 +81,8 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
     private(set) var initialAttributes: Attributes
     
     // MARK: Tasks
-    private var subjectAreaChangeTask: Task<Void, Never>?
-    private var subjectAreaChangeObserver: NSObjectProtocol?
+    // private var subjectAreaChangeTask: Task<Void, Never>?
+    // private var subjectAreaChangeObserver: NSObjectProtocol?
 
 }
 
@@ -241,7 +241,7 @@ private extension CameraManager {
         
         setAutoExposureAndWhiteBalance([backCamera, frontCamera])
         
-        observeSubjectAreaChanges(of: backCamera!)
+        //observeSubjectAreaChanges(of: backCamera!)
 
         microphone = .default(for: .audio)
     }
@@ -357,11 +357,11 @@ private extension CameraManager {
     func setupCameraInput(_ cameraPosition: CameraPosition) throws { switch cameraPosition {
         case .front:
             try setupInput(frontCameraInput)
-            observeSubjectAreaChanges(of: frontCamera!)
+            //observeSubjectAreaChanges(of: frontCamera!)
             return
         case .back:
             try setupInput(backCameraInput)
-            observeSubjectAreaChanges(of: frontCamera!)
+            //observeSubjectAreaChanges(of: frontCamera!)
     }}
     func setupCameraOutput(_ outputType: CameraOutputType) throws { if let output = getOutput(outputType) {
         try setupOutput(output)
@@ -510,7 +510,7 @@ private extension CameraManager {
         }
     }
 
-
+    /*
     // Observe notifications of type `subjectAreaDidChangeNotification` for the specified device.
     private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
         // Cancel the previous observation task.
@@ -529,6 +529,7 @@ private extension CameraManager {
         print(subjectAreaChangeTask.map(\.isCancelled))
 
     }
+    */
     
     func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws {
         try withLockingDeviceForConfiguration(device) { device in
