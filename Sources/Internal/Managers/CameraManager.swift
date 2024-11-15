@@ -153,6 +153,7 @@ extension CameraManager {
 extension CameraManager {
     func setup(in cameraView: UIView) {
         do {
+            cancel()
             makeCameraViewInvisible(cameraView)
             checkPermissions()
             initialiseCaptureSession()
