@@ -28,6 +28,9 @@ public struct MCameraController: View {
         .onChange(of: cameraManager.attributes.capturedMedia) { new in
             onMediaCaptured(new)
         }
+        .onChange(of: cameraManager.cameraGridView) { new in
+            print("Something changed")
+        }
     }
 }
 private extension MCameraController {
