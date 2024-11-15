@@ -97,7 +97,7 @@ extension CameraManager {
 }
 private extension CameraManager {
     func cancelProcesses() {
-        captureSession.stopRunning()
+        captureSession?.stopRunning()
         motionManager.stopAccelerometerUpdates()
         timer.reset()
     }
