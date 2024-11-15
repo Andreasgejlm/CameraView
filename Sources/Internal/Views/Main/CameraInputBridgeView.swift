@@ -33,12 +33,26 @@ extension CameraInputBridgeView: Equatable {
 fileprivate class UICameraInputView: UIViewController {
     var cameraManager: CameraManager!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupCameraManager()
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupCameraManager()
+        // Restore any camera state if needed
+    }
+    
+    @objc func appWillEnterForeground() {
         setupCameraManager()
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
