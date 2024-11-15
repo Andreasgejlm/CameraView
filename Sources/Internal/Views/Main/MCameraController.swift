@@ -44,15 +44,18 @@ private extension MCameraController {
         config.mediaPreviewView?(media, namespace, cameraManager.resetCapturedMedia, performAfterMediaCapturedAction).erased()
     }
     func createCameraView() -> some View {
-        config.cameraView(cameraManager, namespace, config.onCloseController).erased()
+        print("Create camera view")
+        return config.cameraView(cameraManager, namespace, config.onCloseController).erased()
     }
 }
 
 private extension MCameraController {
     func onAppear() {
+        print("Appear")
         lockScreenOrientation()
     }
     func onDisappear() {
+        print("Disappear")
         unlockScreenOrientation()
         cameraManager.cancel()
     }

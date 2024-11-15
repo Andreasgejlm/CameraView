@@ -89,6 +89,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
 // MARK: - Cancellation
 extension CameraManager {
     func cancel() {
+        print("Canceling")
         cancelProcesses()
         resetAttributes()
         resetOthers()
