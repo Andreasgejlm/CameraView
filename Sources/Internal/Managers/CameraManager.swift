@@ -105,6 +105,7 @@ private extension CameraManager {
         attributes = initialAttributes
     }
     func resetOthers() {
+        print("Resetting")
         frontCamera = nil
         backCamera = nil
         microphone = nil
@@ -153,6 +154,7 @@ extension CameraManager {
 extension CameraManager {
     func setup(in cameraView: UIView) {
         do {
+            print("Setting up camera in view")
             makeCameraViewInvisible(cameraView)
             checkPermissions()
             initialiseCaptureSession()
