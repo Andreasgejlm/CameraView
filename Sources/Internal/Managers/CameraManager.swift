@@ -38,11 +38,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var userBlockedScreenRotation: Bool = false
         var presentFrameAfterVideoCapture: Bool = true
     }
-    @Published private(set) var attributes: Attributes {
-        didSet {
-            
-        }
-    }
+    @Published private(set) var attributes: Attributes
 
     // MARK: Devices
     private var frontCamera: AVCaptureDevice?
@@ -177,6 +173,7 @@ extension CameraManager {
             try setupFrameRate()
             startCaptureSession()
             resetBackCameraScaledZoom()
+            print(self.backCamera?.videoZoomFactor)
         } catch { print("CANNOT SETUP CAMERA: \(error)") }
     }
 }
@@ -369,7 +366,7 @@ private extension CameraManager {
             //observeSubjectAreaChanges(of: frontCamera!)
     }}
     func setupCameraOutput(_ outputType: CameraOutputType) throws { if let output = getOutput(outputType) {
-        try setupOutput(output, outputType: outputType)
+        try setupOutput(output)
     }}
 }
 private extension CameraManager {
@@ -385,25 +382,12 @@ private extension CameraManager {
         
         captureSession.addInput(input)
     }
-    func setupOutput(_ output: AVCaptureOutput?, outputType: CameraOutputType? = nil) throws {
+    func setupOutput(_ output: AVCaptureOutput?) throws {
         guard let output,
               captureSession.canAddOutput(output)
         else { throw Error.cannotSetupOutput }
 
         captureSession.addOutput(output)
-        if let outputType {
-            updateVideoGravity(for: outputType)
-        }
-    }
-    private func updateVideoGravity(for outputType: CameraOutputType) {
-        switch outputType {
-        case .photo:
-            cameraLayer?.videoGravity = .resizeAspectFill
-        case .video:
-            cameraLayer?.videoGravity = .resizeAspect
-        default:
-            cameraLayer?.videoGravity = .resizeAspectFill
-        }
     }
 }
 
@@ -441,9 +425,7 @@ extension CameraManager {
     
     func changeOutputTypeAndResolution(_ newOutputType: CameraOutputType, _ newResolution: AVCaptureSession.Preset) throws { if newOutputType != attributes.outputType && newResolution != attributes.resolution && !isChanging {
         captureCurrentFrameAndDelay(.blur) { [self] in
-            
             try changeResolution(newResolution)
-            
             removeCameraOutput(attributes.outputType)
             try setupCameraOutput(newOutputType)
             updateCameraOutputType(newOutputType)
