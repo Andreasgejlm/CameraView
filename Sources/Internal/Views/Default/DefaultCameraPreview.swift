@@ -55,7 +55,7 @@ private extension DefaultCameraPreview {
     func createImageView(_ image: UIImage) -> some View {
         Image(uiImage: image)
             .resizable()
-            .aspectRatio(contentMode: .fit)
+            .aspectRatio(contentMode: .fill)
             .ignoresSafeArea()
     }
     func createVideoView(_ video: URL) -> some View {
