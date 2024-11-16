@@ -296,7 +296,7 @@ private extension CameraManager {
                 }
             }
             backCamera.unlockForConfiguration()
-            print("In reset: ", backCamera.videoZoomFactor, backCamera.deviceType)
+            print("In reset: ", backCamera.videoZoomFactor, backCamera.deviceType, captureSession.sessionPreset)
         } catch {
             print(error)
         }
