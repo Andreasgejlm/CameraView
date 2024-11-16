@@ -24,9 +24,10 @@ public extension CameraManager {
         focusImage: UIImage? = nil,
         focusImageColor: UIColor? = nil,
         focusImageSize: CGFloat? = nil,
-        presentFrameAfterVideoCapture: Bool? = nil
+        presentFrameAfterVideoCapture: Bool? = nil,
+        photoQualityPrioritization: AVCapturePhotoOutput.QualityPrioritization? = nil
     ) {
-        self.init(.init(outputType, cameraPosition, cameraFilters, resolution, frameRate, flashMode, isGridVisible, presentFrameAfterVideoCapture: presentFrameAfterVideoCapture))
+        self.init(Attributes.init(outputType, cameraPosition, cameraFilters, resolution, frameRate, flashMode, isGridVisible, presentFrameAfterVideoCapture: presentFrameAfterVideoCapture, photoQualityPrioritization: photoQualityPrioritization))
 
         if let focusImage { self.cameraFocusView.image = focusImage }
         if let focusImageColor { self.cameraFocusView.tintColor = focusImageColor }
@@ -34,7 +35,7 @@ public extension CameraManager {
     }
 }
 private extension CameraManager.Attributes {
-    init(_ outputType: CameraOutputType?, _ cameraPosition: CameraPosition?, _ cameraFilters: [CIFilter]?, _ resolution: AVCaptureSession.Preset?, _ frameRate: Int32?, _ flashMode: CameraFlashMode?, _ isGridVisible: Bool?, presentFrameAfterVideoCapture: Bool?) { self.init()
+    init(_ outputType: CameraOutputType?, _ cameraPosition: CameraPosition?, _ cameraFilters: [CIFilter]?, _ resolution: AVCaptureSession.Preset?, _ frameRate: Int32?, _ flashMode: CameraFlashMode?, _ isGridVisible: Bool?, presentFrameAfterVideoCapture: Bool?, photoQualityPrioritization: AVCapturePhotoOutput.QualityPrioritization?) { self.init()
         if let outputType { self.outputType = outputType }
         if let cameraPosition { self.cameraPosition = cameraPosition }
         if let cameraFilters { self.cameraFilters = cameraFilters }
