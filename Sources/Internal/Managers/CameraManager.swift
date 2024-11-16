@@ -174,11 +174,11 @@ extension CameraManager {
             try setupFrameRecorder()
             try setupCameraAttributes()
             try setupFrameRate()
+            startCaptureSession()
             resetBackCameraScaledZoom()
             DispatchQueue.main.async {
                 self.attributes.zoomFactor = self.backCamera!.videoZoomFactor
             }
-            startCaptureSession()
         } catch { print("CANNOT SETUP CAMERA: \(error)") }
     }
 }
