@@ -89,7 +89,6 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
 // MARK: - Cancellation
 extension CameraManager {
     func cancel() {
-        print("Canceling")
         cancelProcesses()
         resetAttributes()
         resetOthers()
@@ -106,7 +105,6 @@ private extension CameraManager {
         attributes = initialAttributes
     }
     func resetOthers() {
-        print("Resetting")
         frontCamera = nil
         backCamera = nil
         microphone = nil
@@ -155,7 +153,6 @@ extension CameraManager {
 extension CameraManager {
     func setup(in cameraView: UIView) {
         do {
-            print("Setting up camera in view")
             makeCameraViewInvisible(cameraView)
             checkPermissions()
             initialiseCaptureSession()
@@ -283,6 +280,7 @@ private extension CameraManager {
         let currectZoomFactor = backCamera.videoZoomFactor
         do {
             try backCamera.lockForConfiguration()
+            print(backCamera.deviceType)
             switch backCamera.deviceType {
             case .builtInDualWideCamera:
                 if currectZoomFactor != 2.0 {
@@ -478,7 +476,6 @@ extension CameraManager {
 // MARK: - Camera Focusing
 extension CameraManager {
     func setCameraFocus(_ touchPoint: CGPoint) throws { if let device = getDevice(attributes.cameraPosition) {
-        print("Setting Camera Focus")
         removeCameraFocusAnimations()
         insertCameraFocus(touchPoint)
 
@@ -490,7 +487,6 @@ private extension CameraManager {
         cameraFocusView.layer.removeAllAnimations()
     }
     func insertCameraFocus(_ touchPoint: CGPoint) { DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [self] in
-        print("Inserting Camera Focus")
         insertNewCameraFocusView(touchPoint)
         animateCameraFocusView()
     }}
@@ -501,7 +497,6 @@ private extension CameraManager {
 }
 private extension CameraManager {
     func insertNewCameraFocusView(_ touchPoint: CGPoint) {
-        print("Inserting New Camera Focus View")
         cameraFocusView.frame.origin.x = touchPoint.x - cameraFocusView.frame.size.width / 2
         cameraFocusView.frame.origin.y = touchPoint.y - cameraFocusView.frame.size.height / 2
         cameraFocusView.transform = .init(scaleX: 0, y: 0)
@@ -510,7 +505,6 @@ private extension CameraManager {
         cameraView.addSubview(cameraFocusView)
     }
     func animateCameraFocusView() {
-        print("Animating Camera Focus View")
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0) { [self] in cameraFocusView.transform = .init(scaleX: 1, y: 1) }
         UIView.animate(withDuration: 0.5, delay: 1.5) { [self] in cameraFocusView.alpha = 0.2 } completion: { _ in
             UIView.animate(withDuration: 0.5, delay: 3.5) { [self] in cameraFocusView.alpha = 0 }
@@ -539,7 +533,6 @@ private extension CameraManager {
     */
     
     func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws {
-        print("Configuring focus")
         try withLockingDeviceForConfiguration(device) { device in
             let focusMode = userInitiated ? AVCaptureDevice.FocusMode.autoFocus : .continuousAutoFocus
             if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {

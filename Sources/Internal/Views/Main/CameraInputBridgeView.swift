@@ -36,7 +36,6 @@ fileprivate class UICameraInputView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("View did load")
         setupCameraManager()
     }
     override func viewDidLayoutSubviews() {

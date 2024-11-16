@@ -28,9 +28,6 @@ public struct MCameraController: View {
         .onChange(of: cameraManager.attributes.capturedMedia) { new in
             onMediaCaptured(new)
         }
-        .onChange(of: cameraManager.cameraGridView) { new in
-            print("Something changed")
-        }
     }
 }
 private extension MCameraController {
@@ -47,18 +44,15 @@ private extension MCameraController {
         config.mediaPreviewView?(media, namespace, cameraManager.resetCapturedMedia, performAfterMediaCapturedAction).erased()
     }
     func createCameraView() -> some View {
-        print("Create camera view")
         return config.cameraView(cameraManager, namespace, config.onCloseController).erased()
     }
 }
 
 private extension MCameraController {
     func onAppear() {
-        print("Appear")
         lockScreenOrientation()
     }
     func onDisappear() {
-        print("Disappear")
         unlockScreenOrientation()
         cameraManager.cancel()
     }
