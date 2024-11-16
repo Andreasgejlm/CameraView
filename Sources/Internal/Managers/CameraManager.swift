@@ -1033,7 +1033,7 @@ private extension CameraManager {
         UIView.transition(with: cameraView, duration: flipAnimationDuration, options: flipAnimationTransition) {}
     }}
     func removeBlur() { Task { @MainActor [self] in
-        try await Task.sleep(nanoseconds: 200_000_000)
+        try await Task.sleep(nanoseconds: 20_000_000)
         UIView.animate(withDuration: blurAnimationDuration) { self.cameraBlurView.alpha = 0 }
     }}
 }
@@ -1084,7 +1084,7 @@ extension CameraManager {
 private extension CameraManager {
     func captureCurrentFrameAndDelay(_ type: MetalAnimation, _ action: @escaping () throws -> ()) { Task { @MainActor in
         metalAnimation = type
-        try await Task.sleep(nanoseconds: 15_000_000)
+        try await Task.sleep(nanoseconds: 150_000_000)
 
         try action()
     }}
