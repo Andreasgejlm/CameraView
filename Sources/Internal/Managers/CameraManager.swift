@@ -717,7 +717,7 @@ extension CameraManager {
     func changeResolution(_ newResolution: AVCaptureSession.Preset) throws { if newResolution != attributes.resolution {
         captureSession.sessionPreset = newResolution
         attributes.resolution = newResolution
-        resetBackCameraScaledZoom()
+        resetZoomAndTorch()
     }}
 }
 
