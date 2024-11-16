@@ -1024,7 +1024,7 @@ private extension CameraManager {
     func insertBlurView(_ snapshot: UIImage?) { if let snapshot {
         cameraBlurView = UIImageView(image: snapshot)
         cameraBlurView.frame = cameraView.frame
-        cameraBlurView.contentMode = .scaleAspectFit
+        cameraBlurView.contentMode = .scaleAspectFill
         cameraBlurView.clipsToBounds = true
         cameraBlurView.applyBlurEffect(style: .regular, animationDuration: blurAnimationDuration)
 
