@@ -1026,6 +1026,7 @@ private extension CameraManager {
         cameraBlurView.frame = cameraView.frame
         cameraBlurView.contentMode = .scaleAspectFill
         cameraBlurView.clipsToBounds = true
+        cameraBlurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cameraBlurView.applyBlurEffect(style: .regular, animationDuration: blurAnimationDuration)
 
         cameraView.addSubview(cameraBlurView)
