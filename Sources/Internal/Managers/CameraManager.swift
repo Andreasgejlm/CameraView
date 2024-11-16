@@ -199,7 +199,7 @@ private extension CameraManager {
     }
     func initialiseCameraLayer(_ cameraView: UIView) {
         cameraLayer = .init(session: captureSession)
-        cameraLayer.videoGravity = .resizeAspectFill
+        cameraLayer.videoGravity = .resizeAspect
         cameraLayer.isHidden = true
         cameraLayer.frame = cameraView.bounds
 
