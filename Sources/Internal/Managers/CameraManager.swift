@@ -37,6 +37,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var deviceOrientation: AVCaptureVideoOrientation = .portrait
         var userBlockedScreenRotation: Bool = false
         var presentFrameAfterVideoCapture: Bool = true
+        var photoQualityPrioritization: AVCapturePhotoOutput.QualityPrioritization = .balanced
     }
     @Published private(set) var attributes: Attributes
 
@@ -385,7 +386,6 @@ private extension CameraManager {
         guard let output,
               captureSession.canAddOutput(output)
         else { throw Error.cannotSetupOutput }
-
         captureSession.addOutput(output)
     }
 }
@@ -788,6 +788,13 @@ extension CameraManager {
 }
 
 // MARK: Photo
+extension CameraManager {
+    func setPhotoQualityPrioritization(_ priority: AVCapturePhotoOutput.QualityPrioritization) {
+        attributes.photoQualityPrioritization = priority
+    }
+}
+
+
 private extension CameraManager {
     func capturePhoto() {
         let settings = getPhotoOutputSettings()
@@ -801,6 +808,7 @@ private extension CameraManager {
     func getPhotoOutputSettings() -> AVCapturePhotoSettings {
         let settings = AVCapturePhotoSettings()
         settings.flashMode = attributes.flashMode.get()
+        settings.photoQualityPrioritization = attributes.photoQualityPrioritization
         return settings
     }
     func performCaptureAnimation() {
@@ -810,6 +818,7 @@ private extension CameraManager {
         animateCaptureView(view)
     }
 }
+
 private extension CameraManager {
     func createCaptureAnimationView() -> UIView {
         let view = UIView()

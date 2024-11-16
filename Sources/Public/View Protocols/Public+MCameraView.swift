@@ -44,6 +44,7 @@ public extension MCameraView {
     func changeMirrorOutputMode(_ shouldMirror: Bool) { cameraManager.changeMirrorMode(shouldMirror) }
     func changeGridVisibility(_ shouldShowGrid: Bool) { cameraManager.changeGridVisibility(shouldShowGrid) }
     func setFocus(_ tagGestureLocation: CGPoint) throws { try cameraManager.setCameraFocus(tagGestureLocation) }
+    func setPhotoQualityPrioritization(_ priority: AVCapturePhotoOutput.QualityPrioritization) { cameraManager.setPhotoQualityPrioritization(priority) }
 }
 
 // MARK: - Flags
@@ -68,4 +69,5 @@ public extension MCameraView {
     var hasTorch: Bool { cameraManager.hasTorch }
     var hasFlash: Bool { cameraManager.hasFlash }
     var isOrientationLocked: Bool { cameraManager.orientationLocked || cameraManager.attributes.userBlockedScreenRotation }
+    var photoQualityPrioritization: AVCapturePhotoOutput.QualityPrioritization { cameraManager.attributes.photoQualityPrioritization }
 }
