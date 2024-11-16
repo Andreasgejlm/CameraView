@@ -716,6 +716,7 @@ extension CameraManager {
     func changeResolution(_ newResolution: AVCaptureSession.Preset) throws { if newResolution != attributes.resolution {
         captureSession.sessionPreset = newResolution
         attributes.resolution = newResolution
+        resetBackCameraScaledZoom()
     }}
 }
 
@@ -725,6 +726,7 @@ extension CameraManager {
         try checkNewFrameRate(newFrameRate, device)
         try updateFrameRate(newFrameRate, device)
         updateFrameRate(newFrameRate)
+        resetBackCameraScaledZoom()
     }}
 }
 private extension CameraManager {
