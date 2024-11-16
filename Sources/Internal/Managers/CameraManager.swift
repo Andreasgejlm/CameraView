@@ -213,7 +213,7 @@ private extension CameraManager {
         cameraMetalView.framebufferOnly = false
         cameraMetalView.autoResizeDrawable = false
 
-        cameraMetalView.contentMode = .scaleAspectFill
+        cameraMetalView.contentMode = .scaleAspectFit
         cameraMetalView.clipsToBounds = true
         cameraMetalView.addToParent(cameraView)
     }
