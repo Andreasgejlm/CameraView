@@ -176,6 +176,7 @@ extension CameraManager {
             DispatchQueue.main.async {
                 self.attributes.zoomFactor = self.backCamera!.videoZoomFactor
             }
+            print(self.backCamera?.videoZoomFactor)
         } catch { print("CANNOT SETUP CAMERA: \(error)") }
     }
 }
@@ -280,7 +281,6 @@ private extension CameraManager {
         let currectZoomFactor = backCamera.videoZoomFactor
         do {
             try backCamera.lockForConfiguration()
-            print(backCamera.deviceType)
             switch backCamera.deviceType {
             case .builtInDualWideCamera:
                 if currectZoomFactor != 2.0 {
