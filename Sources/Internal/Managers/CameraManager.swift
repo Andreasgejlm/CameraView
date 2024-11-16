@@ -200,7 +200,7 @@ private extension CameraManager {
     func initialiseCameraLayer(_ cameraView: UIView) {
         cameraLayer = .init(session: captureSession)
         cameraLayer.frame = cameraView.bounds
-        cameraLayer.videoGravity = .resizeAspect
+        cameraLayer.videoGravity = .resizeAspectFill
         cameraLayer.isHidden = true
         cameraView.layer.addSublayer(cameraLayer)
     }
@@ -213,7 +213,7 @@ private extension CameraManager {
         cameraMetalView.framebufferOnly = false
         cameraMetalView.autoResizeDrawable = false
 
-        cameraMetalView.contentMode = .scaleAspectFill
+        cameraMetalView.contentMode = .scaleAspectFit
         cameraMetalView.clipsToBounds = true
         cameraMetalView.addToParent(cameraView)
     }
@@ -1022,7 +1022,7 @@ private extension CameraManager {
     func insertBlurView(_ snapshot: UIImage?) { if let snapshot {
         cameraBlurView = UIImageView(image: snapshot)
         cameraBlurView.frame = cameraView.frame
-        cameraBlurView.contentMode = .scaleAspectFill
+        cameraBlurView.contentMode = .scaleAspectFit
         cameraBlurView.clipsToBounds = true
         cameraBlurView.applyBlurEffect(style: .regular, animationDuration: blurAnimationDuration)
 
