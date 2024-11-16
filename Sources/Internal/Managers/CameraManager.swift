@@ -423,14 +423,16 @@ extension CameraManager {
     }}
     
     func changeOutputTypeAndResolution(_ newOutputType: CameraOutputType, _ newResolution: AVCaptureSession.Preset) throws { if newOutputType != attributes.outputType && newResolution != attributes.resolution && !isChanging {
-        captureCurrentFrameAndDelay(.blur) { [self] in
-            try changeResolution(newResolution)
-            removeCameraOutput(attributes.outputType)
-            try setupCameraOutput(newOutputType)
-            updateCameraOutputType(newOutputType)
-            
-            updateTorchMode(.off)
-            removeBlur()
+        DispatchQueue.main.async {
+            self.captureCurrentFrameAndDelay(.blur) { [self] in
+                try changeResolution(newResolution)
+                removeCameraOutput(attributes.outputType)
+                try setupCameraOutput(newOutputType)
+                updateCameraOutputType(newOutputType)
+                
+                updateTorchMode(.off)
+                removeBlur()
+            }
         }
     }}
     
