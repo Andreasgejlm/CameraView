@@ -13,6 +13,7 @@ import SwiftUI
 import AVFoundation
 import MijickTimer
 
+@MainActor
 public protocol MCameraView: View {
     var cameraManager: CameraManager { get }
     var namespace: Namespace.ID { get }
