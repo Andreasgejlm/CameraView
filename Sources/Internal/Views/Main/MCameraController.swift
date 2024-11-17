@@ -11,6 +11,7 @@
 
 import SwiftUI
 
+@MainActor
 public struct MCameraController: View {
     @ObservedObject var cameraManager: CameraManager
     @Namespace var namespace

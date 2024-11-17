@@ -11,6 +11,7 @@
 import SwiftUI
 import UIKit
 
+@MainActor
 struct CameraInputBridgeView: UIViewRepresentable {
     let cameraManager: CameraManager
     private var inputView: UICameraInputView = .init()
@@ -25,7 +26,7 @@ extension CameraInputBridgeView {
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 extension CameraInputBridgeView: Equatable {
-    static func == (lhs: Self, rhs: Self) -> Bool { true }
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool { true }
 }
 
 
