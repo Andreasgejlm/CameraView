@@ -492,7 +492,7 @@ extension CameraManager {
     func setCameraFocus(_ touchPoint: CGPoint) throws { if let device = getDevice(attributes.cameraPosition) {
         removeCameraFocusAnimations()
         insertCameraFocus(touchPoint)
-
+        
         try setCameraFocus(touchPoint, device)
     }}
 }
@@ -505,8 +505,8 @@ private extension CameraManager {
         animateCameraFocusView()
     }}
     func setCameraFocus(_ touchPoint: CGPoint, _ device: AVCaptureDevice) throws {
-        let focusPoint = cameraLayer.captureDevicePointConverted(fromLayerPoint: touchPoint)
-        try configureCameraFocus(focusPoint, device, userInitiated: true)
+        let focusPoint = convertTouchPointToFocusPoint(touchPoint)
+        try configureCameraFocus(focusPoint, device)
     }
 }
 private extension CameraManager {
@@ -515,7 +515,7 @@ private extension CameraManager {
         cameraFocusView.frame.origin.y = touchPoint.y - cameraFocusView.frame.size.height / 2
         cameraFocusView.transform = .init(scaleX: 0, y: 0)
         cameraFocusView.alpha = 1
-
+        
         cameraView.addSubview(cameraFocusView)
     }
     func animateCameraFocusView() {
@@ -524,47 +524,14 @@ private extension CameraManager {
             UIView.animate(withDuration: 0.5, delay: 3.5) { [self] in cameraFocusView.alpha = 0 }
         }
     }
-
-    /*
-    // Observe notifications of type `subjectAreaDidChangeNotification` for the specified device.
-    private func observeSubjectAreaChanges(of device: AVCaptureDevice) {
-        // Cancel the previous observation task.
-        subjectAreaChangeTask?.cancel()
-        print(subjectAreaChangeTask.map(\.isCancelled))
-
-        subjectAreaChangeTask = Task {
-            print("In subject task")
-            // Signal true when this notification occurs.
-            for await _ in NotificationCenter.default.notifications(named: AVCaptureDevice.subjectAreaDidChangeNotification, object: device).compactMap({ _ in true }) {
-                // Perform a system-initiated focus and expose.
-                print("Triggered")
-                try? self.configureCameraFocus(CGPoint(x: 0.5, y: 0.5), device, userInitiated: false)
-            }
-        }
-        print(subjectAreaChangeTask.map(\.isCancelled))
-
-    }
-    */
-    
-    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice, userInitiated: Bool) throws {
-        try withLockingDeviceForConfiguration(device) { device in
-            let focusMode = userInitiated ? AVCaptureDevice.FocusMode.autoFocus : .continuousAutoFocus
-            if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
-                device.focusPointOfInterest = focusPoint
-                device.focusMode = focusMode
-            }
-            
-            let exposureMode = userInitiated ? AVCaptureDevice.ExposureMode.autoExpose : .continuousAutoExposure
-            if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
-                device.exposurePointOfInterest = focusPoint
-                device.exposureMode = exposureMode
-            }
-            // Enable subject-area change monitoring when performing a user-initiated automatic focus and exposure operation.
-            // If this method enables change monitoring, when the device's subject area changes, the app calls this method a
-            // second time and resets the device to continuous automatic focus and exposure.
-            device.isSubjectAreaChangeMonitoringEnabled = userInitiated
-        }
-    }
+    func convertTouchPointToFocusPoint(_ touchPoint: CGPoint) -> CGPoint { .init(
+        x: touchPoint.y / cameraView.frame.height,
+        y: 1 - touchPoint.x / cameraView.frame.width
+    )}
+    func configureCameraFocus(_ focusPoint: CGPoint, _ device: AVCaptureDevice) throws { try withLockingDeviceForConfiguration(device) { device in
+        setFocusPointOfInterest(focusPoint, device)
+        setExposurePointOfInterest(focusPoint, device)
+    }}
 }
 
 private extension CameraManager {
