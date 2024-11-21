@@ -11,7 +11,6 @@
 
 import SwiftUI
 
-@MainActor
 struct CameraConfig {
     // MARK: Default Views
     var cameraErrorView: ErrorViewBuilder = DefaultCameraErrorView.init

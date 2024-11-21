@@ -125,7 +125,7 @@ private extension CameraManager {
         cameraMetalView = nil
         cameraGridView = nil
         cameraBlurView = nil
-        cameraFocusView = .init()
+        cameraFocusView = .create(image: .iconCrosshair, tintColor: .yellow, size: 92)
         motionManager = .init()
     }
     func removeObservers() {
@@ -911,6 +911,8 @@ private extension CameraManager {
         updateDeviceOrientation(newDeviceOrientation)
         updateUserBlockedScreenRotation()
         updateFrameOrientation()
+        redrawGrid()
+
     }}
 }
 private extension CameraManager {

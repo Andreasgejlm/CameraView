@@ -11,45 +11,50 @@
 import SwiftUI
 import UIKit
 
-@MainActor
-struct CameraInputBridgeView: UIViewRepresentable {
+struct CameraInputBridgeView {
     let cameraManager: CameraManager
-    private var inputView: UICameraInputView = .init()
-    
-    init(_ cameraManager: CameraManager) { self.cameraManager = cameraManager }
+    let inputView: UIView = .init()
 }
-extension CameraInputBridgeView {
+
+
+// MARK: - PROTOCOLS CONFORMANCE
+
+   
+// MARK: UIViewRepresentable
+extension CameraInputBridgeView: UIViewRepresentable {
     func makeUIView(context: Context) -> some UIView {
-        inputView.cameraManager = cameraManager
-        return inputView.view
+        setupCameraManager()
+
+        return inputView
     }
     func updateUIView(_ uiView: UIViewType, context: Context) {}
-}
-extension CameraInputBridgeView: Equatable {
-    nonisolated static func == (lhs: Self, rhs: Self) -> Bool { true }
-}
+    func makeCoordinator() -> Coordinator { .init(self) }
 
-
-// MARK: - UIViewController
-fileprivate class UICameraInputView: UIViewController {
-    var cameraManager: CameraManager!
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupCameraManager()
-    }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        cameraManager.fixCameraRotation()
-    }
 }
 
 // MARK: - Setup
-private extension UICameraInputView {
+private extension CameraInputBridgeView {
     func setupCameraManager() {
-        cameraManager.setup(in: view)
+        cameraManager.setup(in: inputView)
     }
 }
 
+
+extension CameraInputBridgeView: Equatable {
+    static func ==(lhs: Self, rhs: Self) -> Bool { true }
+}
+
+// MARK: - LOGIC
+extension CameraInputBridgeView { class Coordinator: NSObject { init(_ parent: CameraInputBridgeView) { self.parent = parent }
+    let parent: CameraInputBridgeView
+}}
+
+// MARK: On Tap
+extension CameraInputBridgeView.Coordinator {
+    @objc func onTapGesture(_ tap: UITapGestureRecognizer) {
+        do {
+            let touchPoint = tap.location(in: parent.inputView)
+            try parent.cameraManager.setCameraFocus(touchPoint)
+        } catch {}
+    }
+}
