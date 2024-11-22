@@ -10,6 +10,7 @@
 
 
 import SwiftUI
+import AVKit
 
 struct CameraConfig {
     // MARK: Default Views
@@ -21,7 +22,7 @@ struct CameraConfig {
     var appDelegate: MApplicationDelegate.Type? = nil
 
     // MARK: Actions
-    var onImageCaptured: (UIImage, [String: Any]?) -> () = { _, _ in }
+    var onImageCaptured: (UIImage, [String: Any]?, AVCaptureVideoOrientation) -> () = { _, _,_  in }
     var onVideoCaptured: (URL) -> () = { _ in }
     var afterMediaCaptured: (PostCameraConfig) -> (PostCameraConfig) = { _ in .init() }
     var onCloseController: () -> () = {}
