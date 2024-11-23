@@ -38,13 +38,10 @@ extension MCameraMedia {
         let metadata = imageData.metadata
 
         guard let imageData = imageData.fileDataRepresentation(),
-              let ciImage = CIImage(data: imageData)
+              let uiimage = UIImage(data: imageData)
         else { return nil }
-        let capturedCIImage = prepareCIImage(ciImage, filters)
-        let capturedCGImage = prepareCGImage(capturedCIImage)
-        let capturedUIImage = prepareUIImage(capturedCGImage, orientation)
 
-        let capturedMedia = MCameraMedia(data: capturedUIImage, metadata: metadata)
+        let capturedMedia = MCameraMedia(data: uiimage, metadata: metadata)
         return capturedMedia
     }
 }
