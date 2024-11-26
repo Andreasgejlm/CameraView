@@ -12,7 +12,7 @@
 import SwiftUI
 
 public struct DefaultCameraView: MCameraView {
-    @ObservedObject public var cameraManager: CameraManager
+    @State public var cameraManager: CameraManager
     public let namespace: Namespace.ID
     public let closeControllerAction: () -> ()
     var config: Config = .init()

@@ -12,7 +12,7 @@
 import SwiftUI
 
 public struct MCameraController: View {
-    @ObservedObject var cameraManager: CameraManager
+    @State var cameraManager: CameraManager
     @Namespace var namespace
     var config: CameraConfig = .init()
 
@@ -25,7 +25,7 @@ public struct MCameraController: View {
         .animation(.defaultEase, value: cameraManager.attributes.capturedMedia)
         .onAppear(perform: onAppear)
         .onDisappear(perform: onDisappear)
-        .onChange(of: cameraManager.attributes.capturedMedia) { new in
+        .onChange(of: cameraManager.attributes.capturedMedia) { old, new in
             onMediaCaptured(new)
         }
     }

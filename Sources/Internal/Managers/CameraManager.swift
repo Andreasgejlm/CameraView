@@ -15,8 +15,8 @@ import MetalKit
 import CoreMotion
 import MijickTimer
 
-
-public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attributes) { self.initialAttributes = attributes; self.attributes = attributes }
+@Observable
+public class CameraManager: NSObject { init(_ attributes: Attributes) { self.initialAttributes = attributes; self.attributes = attributes }
     // MARK: Attributes
     struct Attributes {
         var capturedMedia: MCameraMedia? = nil
@@ -40,7 +40,7 @@ public class CameraManager: NSObject, ObservableObject { init(_ attributes: Attr
         var presentFrameAfterVideoCapture: Bool = true
         var photoQualityPrioritization: AVCapturePhotoOutput.QualityPrioritization = .balanced
     }
-    @Published private(set) var attributes: Attributes
+    private(set) var attributes: Attributes
 
     // MARK: Devices
     private var frontCamera: AVCaptureDevice?
