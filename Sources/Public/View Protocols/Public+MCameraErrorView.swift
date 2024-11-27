@@ -11,6 +11,7 @@
 
 import SwiftUI
 
+@MainActor
 public protocol MCameraErrorView: View {
     var error: CameraManager.Error { get }
     var closeControllerAction: () -> () { get }

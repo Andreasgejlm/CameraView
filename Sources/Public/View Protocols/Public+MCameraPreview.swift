@@ -11,6 +11,7 @@
 
 import SwiftUI
 
+@MainActor
 public protocol MCameraPreview: View {
     var capturedMedia: MCameraMedia { get }
     var namespace: Namespace.ID { get }
